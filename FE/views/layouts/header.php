@@ -290,8 +290,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Location Toggle Logic
+    document.querySelectorAll('.location-menu-item').forEach(function(item) {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Remove active + check from all items
+            document.querySelectorAll('.location-menu-item').forEach(function(el) {
+                el.classList.remove('active');
+                var chk = el.querySelector('.bi-check2');
+                if (chk) chk.remove();
+            });
+            // Set active on clicked item
+            this.classList.add('active');
+            var checkIcon = document.createElement('i');
+            checkIcon.className = 'bi bi-check2 ms-auto';
+            this.appendChild(checkIcon);
+            // Update button text
+            var cityName = this.textContent.trim();
+            var btnText = document.querySelector('.btn-location-text');
+            if (btnText) btnText.textContent = cityName;
+        });
+    });
 });
-</script>
 </script>
 
 <script src="assets/javascript/cart.js"></script>
