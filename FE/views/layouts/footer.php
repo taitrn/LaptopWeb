@@ -87,7 +87,6 @@ if (!function_exists('getSetting')) {
 
 
 <script src="assets/javascript/header.js"></script>
-<script src="assets/javascript/product_detail.js"></script>
 <script src="assets/javascript/cart.js"></script>
 
 

@@ -133,14 +133,14 @@ $siteLogo = getImageUrl($logoPath);
                     <i class="bi bi-search" aria-hidden="true"></i>
                     <form action="index.php" method="GET" class="w-100 mb-0">
                         <input type="hidden" name="page" value="shop">
-                        <input type="text" name="search" placeholder="Bạn muốn mua gì hôm nay?" required class="w-100 border-0 bg-transparent outline-none">
+                        <input type="text" name="search" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" placeholder="Bạn muốn mua gì hôm nay?" required class="w-100 border-0 bg-transparent outline-none">
                     </form>
                 </div>
 
                 <div class="header-actions ms-2">
                     <!-- Cart Dropdown -->
                     <div class="dropdown">
-                        <a href="index.php?page=cart" class="action-link" <?= $isLoggedIn ? 'data-bs-toggle="dropdown" aria-expanded="false"' : 'onclick="alert(\'You must log in to access the cart\'); return true;"' ?>>
+                        <a href="index.php?page=cart" class="action-link">
                             <span>Giỏ hàng</span>
                             <span class="icon-with-badge">
                                 <i class="bi bi-cart3" aria-hidden="true"></i>
@@ -224,7 +224,7 @@ $siteLogo = getImageUrl($logoPath);
                 <i class="bi bi-search ms-2 text-dark" aria-hidden="true"></i>
                 <form action="index.php" method="GET" class="w-100 mb-0 d-flex">
                     <input type="hidden" name="page" value="shop">
-                    <input type="text" name="search" placeholder="Bạn tìm gì hôm nay?" class="w-100 border-0 bg-transparent outline-none p-2" style="color: #111;">
+                    <input type="text" name="search" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" placeholder="Bạn tìm gì hôm nay?" class="w-100 border-0 bg-transparent outline-none p-2" style="color: #111;">
                 </form>
             </div>
 

@@ -23,11 +23,11 @@ class ProductModel extends BaseModel {
             b.name   AS brand, 
             c.name   AS category,
             c.slug   AS category_slug,
-            (SELECT base_price FROM product_variants WHERE product_id = p.id ORDER BY base_price ASC LIMIT 1) AS price,
+            COALESCE((SELECT base_price FROM product_variants WHERE product_id = p.id ORDER BY base_price ASC LIMIT 1), 0) AS price,
             (SELECT storage    FROM product_variants WHERE product_id = p.id ORDER BY base_price ASC LIMIT 1) AS storage,
             (SELECT ram        FROM product_variants WHERE product_id = p.id ORDER BY base_price ASC LIMIT 1) AS ram,
-            (SELECT img_url    FROM product_variants WHERE product_id = p.id AND img_url IS NOT NULL LIMIT 1)  AS image,
-            (SELECT SUM(quantity) FROM product_variants WHERE product_id = p.id)                                AS stock
+            COALESCE((SELECT img_url FROM product_variants WHERE product_id = p.id AND img_url IS NOT NULL LIMIT 1), 'assets/img/placeholder.png') AS image,
+            COALESCE((SELECT SUM(quantity) FROM product_variants WHERE product_id = p.id), 0) AS stock
         FROM products p
         LEFT JOIN brands     b ON p.brand_id    = b.id
         LEFT JOIN categories c ON p.category_id = c.id";
@@ -82,6 +82,16 @@ class ProductModel extends BaseModel {
         $query = "SELECT * FROM (" . $this->getBaseSelect() . ") AS t WHERE 1=1";
         $params = [];
 
+        if (!empty($filters['search'])) {
+            $query .= " AND (name LIKE ? OR brand LIKE ? OR category LIKE ? OR short_description LIKE ? OR description LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+        }
+
         if (!empty($filters['brand'])) {
             $ph = implode(',', array_fill(0, count($filters['brand']), '?'));
             $query .= " AND brand IN ($ph)";
@@ -121,6 +131,16 @@ class ProductModel extends BaseModel {
         try {
             $query = "SELECT COUNT(*) AS total FROM (" . $this->getBaseSelect() . ") AS t WHERE 1=1";
             $params = [];
+
+            if (!empty($filters['search'])) {
+                $query .= " AND (name LIKE ? OR brand LIKE ? OR category LIKE ? OR short_description LIKE ? OR description LIKE ?)";
+                $searchTerm = '%' . $filters['search'] . '%';
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+                $params[] = $searchTerm;
+            }
 
             if (!empty($filters['brand']) && is_array($filters['brand'])) {
                 $ph = implode(',', array_fill(0, count($filters['brand']), '?'));
@@ -216,10 +236,22 @@ class ProductModel extends BaseModel {
                 // Color variants
                 if (!empty($r['color']) && !in_array($r['color'], $seenColor)) {
                     $seenColor[] = $r['color'];
+                    $colorName = $r['color'];
+                    $colorMap = [
+                        'Black' => '#111111',
+                        'Silver' => '#c0c0c0',
+                        'Gray' => '#6c757d',
+                        'Space Gray' => '#5c5f66',
+                        'Space Black' => '#111827',
+                        'Midnight' => '#1f2a44',
+                        'Starlight' => '#f2e8cf',
+                        'White' => '#f8f9fa',
+                        'Blue' => '#4f6df5',
+                    ];
                     $grouped['color'][] = [
                         'id'             => $r['id'],
-                        'variant_name'   => $r['color'],
-                        'variant_value'  => $r['color'],
+                        'variant_name'   => $colorName,
+                        'variant_value'  => $colorMap[$colorName] ?? $colorName,
                         'price_modifier' => 0,
                         'stock'          => (int)$r['quantity'],
                         'is_default'     => $isFirst['color'] ? 1 : 0,

@@ -335,15 +335,17 @@ class OrderModel extends BaseModel {
             $stmt = $this->db->prepare(
                 "INSERT INTO orders (user_id, order_code, shipping_address, total_amount, 
                                     discount_amount, final_amount, payment_method)
-                 VALUES (?, ?, ?, ?, 0, ?, ?)"
+                 VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
-            $userId = $_SESSION['user_id'] ?? 0;
+            $userId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
             $orderCode = 'ORD-' . strtoupper(substr(uniqid(), -8));
-            $total = $data['total'] ?? $data['subtotal'] ?? 0;
+            $totalAmount = $data['subtotal'] ?? 0;
+            $discountAmount = $data['discount_amount'] ?? 0;
+            $finalAmount = $data['total'] ?? ($totalAmount - $discountAmount);
 
             $stmt->execute([
                 $userId, $orderCode, $data['shipping_address'] ?? '',
-                $total, $total, $data['payment_method'] ?? 'cod'
+                $totalAmount, $discountAmount, $finalAmount, $data['payment_method'] ?? 'cod'
             ]);
             $orderId = (int) $this->db->lastInsertId();
 
