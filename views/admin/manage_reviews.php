@@ -1,6 +1,6 @@
 
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
-
+<?php include 'views/layouts/admin_header.php'; ?>
 <!-- Admin Layout Wrapper -->
 <div class="admin-layout">
     <?php include 'views/layouts/admin_sidebar.php'; ?>
@@ -34,18 +34,18 @@
         <!-- Filter Tabs -->
         <div class="content-card">
             <div class="card-tabs">
-                <a href="?page=admin_reviews&status=all" class="tab-link <?= $status === 'all' ? 'active' : '' ?>">
+                <a href="?page=manage_reviews&status=all" class="tab-link <?= $status === 'all' ? 'active' : '' ?>">
                     All Reviews
                 </a>
-                <a href="?page=admin_reviews&status=pending" class="tab-link <?= $status === 'pending' ? 'active' : '' ?>">
+                <a href="?page=manage_reviews&status=pending" class="tab-link <?= $status === 'pending' ? 'active' : '' ?>">
                     Pending <?php if($stats['pending'] > 0): ?>
                         <span class="badge badge-warning"><?= $stats['pending'] ?></span>
                     <?php endif; ?>
                 </a>
-                <a href="?page=admin_reviews&status=approved" class="tab-link <?= $status === 'approved' ? 'active' : '' ?>">
+                <a href="?page=manage_reviews&status=approved" class="tab-link <?= $status === 'approved' ? 'active' : '' ?>">
                     Approved
                 </a>
-                <a href="?page=admin_reviews&status=rejected" class="tab-link <?= $status === 'rejected' ? 'active' : '' ?>">
+                <a href="?page=manage_reviews&status=rejected" class="tab-link <?= $status === 'rejected' ? 'active' : '' ?>">
                     Rejected
                 </a>
             </div>
@@ -106,7 +106,7 @@
                                             <strong><?= htmlspecialchars(substr($review['review_title'], 0, 40)) ?></strong><br>
                                         <?php endif; ?>
                                         <small class="text-muted">
-                                            <?= htmlspecialchars(substr($review['review_text'], 0, 60)) ?>...
+                                            <?= htmlspecialchars(substr($review['review_text'] ?? '', 0, 60)) ?>...
                                         </small>
                                     </td>
                                     
@@ -191,20 +191,20 @@
                         </div>
                         <div class="pagination">
                             <?php if ($page > 1): ?>
-                                <a href="?page=admin_reviews&status=<?= $status ?>&current_page=<?= $page - 1 ?>" class="page-link">
+                                <a href="?page=manage_reviews&status=<?= $status ?>&current_page=<?= $page - 1 ?>" class="page-link">
                                     <i class="bi bi-chevron-left"></i> Prev
                                 </a>
                             <?php endif; ?>
                             
                             <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                                <a href="?page=admin_reviews&status=<?= $status ?>&current_page=<?= $i ?>" 
+                                <a href="?page=manage_reviews&status=<?= $status ?>&current_page=<?= $i ?>" 
                                    class="page-link <?= $i === $page ? 'active' : '' ?>">
                                     <?= $i ?>
                                 </a>
                             <?php endfor; ?>
                             
                             <?php if ($page < $totalPages): ?>
-                                <a href="?page=admin_reviews&status=<?= $status ?>&current_page=<?= $page + 1 ?>" class="page-link">
+                                <a href="?page=manage_reviews&status=<?= $status ?>&current_page=<?= $page + 1 ?>" class="page-link">
                                     Next <i class="bi bi-chevron-right"></i>
                                 </a>
                             <?php endif; ?>

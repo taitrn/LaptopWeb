@@ -87,19 +87,3 @@ function getImageUrl($imagePath) {
     // If file doesn't exist, return with default version
     return $imagePath . '?v=1';
 }
-
-/**
- * Resolve an image path used by the FE views.
- * Accepts absolute URLs, root-relative paths, assets paths, or bare filenames.
- */
-function resolveImagePath($imagePath, $fallback = 'assets/img/placeholder.png') {
-    if (empty($imagePath)) {
-        return $fallback;
-    }
-
-    if (preg_match('#^(https?://|/|assets/)#', $imagePath)) {
-        return $imagePath;
-    }
-
-    return 'assets/img/' . ltrim($imagePath, '/');
-}

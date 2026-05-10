@@ -25,12 +25,13 @@ $currentPage = $_GET['page'] ?? 'admin_dashboard';
                     <li class="<?= $currentPage === 'manage_profile' ? 'active' : '' ?>">
                         <a href="?page=manage_profile" aria-expanded="true"><i class="ti-user"></i><span>Customers</span></a>
                     </li>
-                    <li class="<?= $currentPage === 'manage_reviews' || $currentPage === 'admin_reviews' ? 'active' : '' ?>">
-                        <a href="?page=admin_reviews" aria-expanded="true"><i class="ti-star"></i><span>Reviews</span></a>
+                    <li class="<?= $currentPage === 'manage_reviews' || $currentPage === 'manage_reviews' ? 'active' : '' ?>">
+                        <a href="?page=manage_reviews" aria-expanded="true"><i class="ti-star"></i><span>Reviews</span></a>
                     </li>
                     <li class="<?= $currentPage === 'manage_qna' ? 'active' : '' ?>">
                         <a href="?page=manage_qna" aria-expanded="true"><i class="ti-help-alt"></i><span>Q&A</span></a>
                     </li>
+
                     <li class="<?= $currentPage === 'manage_about_info' || $currentPage === 'manage_info' ? 'active' : '' ?>">
                         <a href="javascript:void(0)" aria-expanded="true"><i class="ti-settings"></i><span>Settings</span></a>
                         <ul class="collapse <?= in_array($currentPage, ['manage_about_info', 'manage_info']) ? 'in' : '' ?>">
