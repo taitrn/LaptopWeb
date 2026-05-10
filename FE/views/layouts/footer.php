@@ -72,7 +72,6 @@ if (!function_exists('getSetting')) {
       </div>
     </div>
     
-    
     <div class="cps-footer-bottom">
       <div class="row align-items-center">
         <div class="col-md-12 text-center text-muted">
@@ -84,24 +83,10 @@ if (!function_exists('getSetting')) {
   </div>
 </footer>
 
-<script>
-function handleNewsletter(e) {
-    e.preventDefault();
-    var msg = document.getElementById('newsletterMsg');
-    msg.style.display = 'block';
-    msg.className = 'mt-2 text-center small text-success fw-bold';
-    msg.textContent = '🎉 Đăng ký thành công! Voucher sẽ được gửi trong 24h.';
-    e.target.reset();
-    setTimeout(function() { msg.style.display = 'none'; }, 5000);
-    return false;
-}
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 <script src="assets/javascript/header.js"></script>
-<script src="assets/javascript/product_detail.js"></script>
 <script src="assets/javascript/cart.js"></script>
 
 

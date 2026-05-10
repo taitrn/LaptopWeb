@@ -128,14 +128,22 @@ class ShoppingCart {
             
             if (data.success) {
                 // Update badge
-                this.cartBadge.textContent = data.itemCount;
-                this.cartItemCount.textContent = `${data.itemCount} items`;
+                if (this.cartBadge) {
+                    this.cartBadge.textContent = data.itemCount;
+                }
+                if (this.cartItemCount) {
+                    this.cartItemCount.textContent = `${data.itemCount} items`;
+                }
                 
                 // Update total
-                this.cartTotalAmount.textContent = `${this.formatNumber(data.total)}`;
+                if (this.cartTotalAmount) {
+                    this.cartTotalAmount.textContent = `${this.formatNumber(data.total)}`;
+                }
                 
                 // Render cart items
-                this.renderMiniCartItems(data.cart);
+                if (this.cartDropdownBody) {
+                    this.renderMiniCartItems(data.cart);
+                }
             }
         } catch (error) {
             console.error('Error updating cart:', error);
@@ -162,7 +170,7 @@ class ShoppingCart {
             const item = cart[id];
             html += `
                 <div class="mini-cart-item">
-                    <img src="${item.image}" alt="${this.escapeHtml(item.name)}">
+                    <img src="${this.resolveImageSrc(item.image)}" alt="${this.escapeHtml(item.name)}">
                     <div class="mini-cart-item-info">
                         <div class="mini-cart-item-name">${this.escapeHtml(item.name)}</div>
                         <div class="mini-cart-item-price">
@@ -242,6 +250,18 @@ class ShoppingCart {
      */
     formatNumber(num) {
         return parseFloat(num).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    }
+
+    resolveImageSrc(imagePath) {
+        if (!imagePath) {
+            return 'assets/img/placeholder.png';
+        }
+
+        if (imagePath.startsWith('http') || imagePath.startsWith('/') || imagePath.startsWith('assets/')) {
+            return imagePath;
+        }
+
+        return `assets/img/${imagePath}`;
     }
     
     /**

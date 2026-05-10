@@ -167,6 +167,16 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS coupons (
+    id               INT           AUTO_INCREMENT PRIMARY KEY,
+    code             VARCHAR(50)   NOT NULL UNIQUE,
+    discount_percent DECIMAL(5,2)  NOT NULL DEFAULT 0.00,
+    is_active        TINYINT(1)    NOT NULL DEFAULT 1,
+    description      VARCHAR(255)  DEFAULT NULL,
+    created_at       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- =============================================
 -- CONTENT
 -- =============================================

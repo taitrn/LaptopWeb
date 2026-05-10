@@ -2,230 +2,266 @@
 require_once 'helpers/settings_helper.php';
 include 'views/layouts/header.php';
 $isLoggedIn = isset($_SESSION['user_id']);
+$products = $products ?? [];
+$totalProducts = $totalProducts ?? count($products);
+$totalPages = $totalPages ?? 1;
+$page = $page ?? 1;
+$filterOptions = $filterOptions ?? ['brands' => [], 'storages' => [], 'categories' => []];
 ?>
 
-<section class="shop-banner" style="background-image: url('assets/img/shop_banner.jpg');">
-    <div class="shop-banner-content text-center">
-        <h1><?php echo htmlspecialchars(getSetting('shop.page_title', 'Shop')); ?></h1>
-        <?php if ($subtitle = getSetting('shop.page_subtitle')): ?>
-        <p class="text-white-50"><?php echo htmlspecialchars($subtitle); ?></p>
-        <?php endif; ?>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb justify-content-center">
-                <li class="breadcrumb-item"><a href="index.php?page=home">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><?php echo htmlspecialchars(getSetting('shop.page_title', 'Shop')); ?></li>
-            </ol>
-        </nav>
-    </div>
-</section>
-
-<div class="filter-bar py-3 bg-light">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="filter-left d-flex align-items-center gap-3">
-            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
-                <i class="bi bi-funnel"></i> <?php echo htmlspecialchars(getSetting('shop.filter_title', 'Filter')); ?>
-            </button>
-            <span class="text-muted small">Showing <?php echo count($products); ?> results</span>
-        </div>
-        <div class="filter-right d-flex align-items-center gap-3">
-            <span class="small"><?php echo htmlspecialchars(getSetting('shop.sort_label', 'Sort by')); ?></span>
-            <form id="sortForm" action="index.php" method="GET">
-                <input type="hidden" name="page" value="shop">
-
-                 <!-- ✅ THÊM PHẦN NÀY: Giữ lại tất cả filter parameters -->
-                <?php
-                // Giữ lại brand filters
-                 if (isset($_GET['brand']) && is_array($_GET['brand'])) {
-                    foreach ($_GET['brand'] as $brand) {
-                    echo '<input type="hidden" name="brand[]" value="' . htmlspecialchars($brand) . '">';
-                    }
-                }
-        
-                // Giữ lại category filter
-                if (isset($_GET['category'])) {
-                    echo '<input type="hidden" name="category" value="' . htmlspecialchars($_GET['category']) . '">';
-                }
-        
-                // Giữ lại storage filters
-                if (isset($_GET['storage']) && is_array($_GET['storage'])) {
-                foreach ($_GET['storage'] as $storage) {
-                    echo '<input type="hidden" name="storage[]" value="' . htmlspecialchars($storage) . '">';
-                    }
-                }
-        
-                // Giữ lại price_min
-                if (isset($_GET['price_min'])) {
-                    echo '<input type="hidden" name="price_min" value="' . htmlspecialchars($_GET['price_min']) . '">';
-                }
-        
-                // Giữ lại price_max
-                if (isset($_GET['price_max'])) {
-                    echo '<input type="hidden" name="price_max" value="' . htmlspecialchars($_GET['price_max']) . '">';
-                }
-                ?>
-        
-                <select name="sort" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
-                    <option value="default" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'default') echo 'selected'; ?>>Default</option>
-                    <option value="price_asc" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'price_asc') echo 'selected'; ?>>Price: Low to High</option>
-                    <option value="price_desc" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'price_desc') echo 'selected'; ?>>Price: High to Low</option>
-                    <option value="name_asc" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'name_asc') echo 'selected'; ?>>Name: A-Z</option>
-                    </select>
-            </form>
+<div class="filter-bar py-4" style="background: white; border-bottom: 2px solid #f0f0f0; position: sticky; top: 0; z-index: 99;">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Filter Button -->
+            <div class="col-auto">
+                <button class="btn btn-sm fw-bold px-3" type="button" data-bs-toggle="modal" data-bs-target="#filterSidebar" style="border-width: 2px; border-radius: 6px; background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff; border: 0; box-shadow: 0 8px 20px rgba(220, 20, 60, 0.25);">
+                    <i class="bi bi-funnel-fill"></i> Lọc
+                </button>
+            </div>
+            
+            <!-- Sort Dropdown -->
+            <div class="col-auto ms-auto">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted fw-bold" style="letter-spacing: 0.3px; margin-bottom: 0;">Sắp xếp:</label>
+                    <form id="sortForm" action="index.php" method="GET" class="d-inline-block">
+                        <input type="hidden" name="page" value="shop">
+                        <?php
+                        if (isset($_GET['search']) && $_GET['search'] !== '') {
+                            echo '<input type="hidden" name="search" value="' . htmlspecialchars($_GET['search']) . '">';
+                        }
+                        if (isset($_GET['brand']) && is_array($_GET['brand'])) {
+                            foreach ($_GET['brand'] as $brand) {
+                                echo '<input type="hidden" name="brand[]" value="' . htmlspecialchars($brand) . '">';
+                            }
+                        }
+                        if (isset($_GET['category'])) {
+                            echo '<input type="hidden" name="category" value="' . htmlspecialchars($_GET['category']) . '">';
+                        }
+                        if (isset($_GET['storage']) && is_array($_GET['storage'])) {
+                            foreach ($_GET['storage'] as $storage) {
+                                echo '<input type="hidden" name="storage[]" value="' . htmlspecialchars($storage) . '">';
+                            }
+                        }
+                        if (isset($_GET['price_min'])) {
+                            echo '<input type="hidden" name="price_min" value="' . htmlspecialchars($_GET['price_min']) . '">';
+                        }
+                        if (isset($_GET['price_max'])) {
+                            echo '<input type="hidden" name="price_max" value="' . htmlspecialchars($_GET['price_max']) . '">';
+                        }
+                        ?>
+                        <select name="sort" class="form-select form-select-sm" style="width: 180px; border-radius: 6px; border: 1px solid #ddd; font-weight: 500; font-size: 13px;" onchange="this.form.submit()">
+                            <option value="default" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'default') echo 'selected'; ?>>Nổi Bật</option>
+                            <option value="price_asc" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'price_asc') echo 'selected'; ?>>Giá: Thấp đến Cao</option>
+                            <option value="price_desc" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'price_desc') echo 'selected'; ?>>Giá: Cao đến Thấp</option>
+                            <option value="name_asc" <?php if(isset($_GET['sort']) && $_GET['sort'] == 'name_asc') echo 'selected'; ?>>Tên: A-Z</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="offcanvas offcanvas-start" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
-    <!-- Offcanvas Header -->
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="filterSidebarLabel">
-            <i class="bi bi-funnel-fill text-primary"></i> <?php echo htmlspecialchars(getSetting('shop.filter_title', 'Filter Products')); ?>
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+<section class="shop-banner-hero" style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); padding: 60px 20px; position: relative; overflow: hidden;">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Left Content -->
+            <div class="col-md-6 z-1">
+                <div style="color: white;">
+                    <span class="badge badge-danger mb-3" style="background-color: white; color: #DC143C; padding: 8px 16px; font-weight: 600; font-size: 12px; letter-spacing: 1px;">CÔNG NGHỆ HÀNG ĐẦU</span>
+                    <h1 class="display-3 fw-bold mb-3" style="line-height: 1.1; font-size: 48px;">
+                        Laptop
+                    </h1>
+                    <p class="lead mb-4" style="font-size: 16px; line-height: 1.6; opacity: 0.95;">
+                        Khám phá thế hệ laptop tiếp theo với hiệu suất tuyệt vời. Tìm kiếm bộ sưu tập premium của chúng tôi gồm ultrabook cao cấp, laptop gaming mạnh mẽ và workstation chuyên nghiệp.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Right Image -->
+            <div class="col-md-6 text-end">
+                <img src="<?php echo resolveImagePath('assets/img/products/product_1.webp'); ?>" 
+                     alt="Laptop Premium" 
+                     style="max-width: 100%; height: auto; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3)); transform: translateZ(0);">
+            </div>
+        </div>
     </div>
     
-    <!-- Offcanvas Body -->
-    <div class="offcanvas-body">
-        <form method="GET" action="index.php" id="filterForm">
-            <input type="hidden" name="page" value="shop">
-            
-            <!-- Giữ lại giá trị sort hiện tại -->
-            <?php if(isset($_GET['sort'])): ?>
-                <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort']) ?>">
-            <?php endif; ?>
+    <!-- Decorative Shape (Background) -->
+    <div style="position: absolute; right: -100px; top: -50px; width: 400px; height: 400px; background: rgba(255,255,255,0.05); border-radius: 50%; z-index: 0;"></div>
+</section>
 
-            <!-- ========== 1. BRAND FILTER ========== -->
-            <div class="filter-section mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="bi bi-phone text-primary"></i> Brand
-                </h6>
-                <div class="filter-options">
-                    <?php if (!empty($filterOptions['brands'])): ?>
-                        <?php foreach($filterOptions['brands'] as $brand): ?>
-                            <div class="form-check">
-                                <input class="form-check-input" 
-                                       type="checkbox" 
-                                       name="brand[]" 
-                                       value="<?= htmlspecialchars($brand) ?>" 
-                                       id="brand-<?= htmlspecialchars($brand) ?>"
-                                       <?= in_array($brand, $_GET['brand'] ?? []) ? 'checked' : '' ?>>
-                                <label class="form-check-label" for="brand-<?= htmlspecialchars($brand) ?>">
-                                    <?= htmlspecialchars($brand) ?>
-                                </label>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p class="text-muted small">No brands available</p>
-                    <?php endif; ?>
-                </div>
+
+<div class="modal fade" id="filterSidebar" tabindex="-1" aria-labelledby="filterSidebarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content" style="border: 0; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);">
+            <div class="modal-header" style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff; border-bottom: 0; padding: 18px 22px;">
+                <h5 class="modal-title fw-bold" id="filterSidebarLabel">
+                    <i class="bi bi-funnel-fill"></i> <?php echo htmlspecialchars(getSetting('shop.filter_title', 'Lọc Sản Phẩm')); ?>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <div class="modal-body" style="background: #fff; padding: 24px 22px;">
+                <form method="GET" action="index.php" id="filterForm">
+                    <input type="hidden" name="page" value="shop">
+                    
+                    <!-- Giữ lại giá trị sort hiện tại -->
+                    <?php if(isset($_GET['sort'])): ?>
+                        <input type="hidden" name="sort" value="<?= htmlspecialchars($_GET['sort']) ?>">
+                    <?php endif; ?>
 
-            <hr>
+                    <!-- ========== 0. SEARCH KEYWORD ========== -->
+                    <div class="filter-section mb-4">
+                        <h6 class="fw-bold mb-3" style="color: #2b2f36;">
+                            <i class="bi bi-search" style="color: #DC143C;"></i> Tìm Kiếm
+                        </h6>
+                        <input type="text"
+                               class="form-control form-control-sm"
+                               name="search"
+                               value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
+                               placeholder="Nhập từ khóa sản phẩm"
+                               style="border-color: #e2e6ea; border-radius: 10px;">
+                        <small class="text-muted d-block mt-2">Tìm theo tên, thương hiệu, danh mục hoặc mô tả.</small>
+                    </div>
 
-            <!-- ========== 2. CATEGORY FILTER ========== -->
-            <div class="filter-section mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="bi bi-grid-3x3-gap text-primary"></i> Category
-                </h6>
-                <div class="filter-options">
-                    <?php if (!empty($filterOptions['categories'])): ?>
-                        <?php foreach($filterOptions['categories'] as $cat): ?>
-                            <div class="form-check">
-                                <input class="form-check-input" 
-                                       type="radio" 
-                                       name="category" 
-                                       value="<?= htmlspecialchars($cat) ?>" 
-                                       id="cat-<?= htmlspecialchars($cat) ?>"
-                                       <?= (isset($_GET['category']) && $_GET['category'] == $cat) ? 'checked' : '' ?>>
-                                <label class="form-check-label" for="cat-<?= htmlspecialchars($cat) ?>">
-                                    <?= htmlspecialchars($cat) ?>
-                                </label>
-                            </div>
-                        <?php endforeach; ?>
-                        <!-- Option to show all categories -->
-                        <div class="form-check">
-                            <input class="form-check-input" 
-                                   type="radio" 
-                                   name="category" 
-                                   value="" 
-                                   id="cat-all"
-                                   <?= !isset($_GET['category']) ? 'checked' : '' ?>>
-                            <label class="form-check-label" for="cat-all">
-                                All Categories
-                            </label>
+                    <hr>
+
+                    <!-- ========== 1. BRAND FILTER ========== -->
+                    <div class="filter-section mb-4">
+                        <h6 class="fw-bold mb-3" style="color: #2b2f36;">
+                            <i class="bi bi-phone" style="color: #DC143C;"></i> Thương Hiệu
+                        </h6>
+                        <div class="filter-options">
+                            <?php if (!empty($filterOptions['brands'])): ?>
+                                <?php foreach($filterOptions['brands'] as $brand): ?>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="brand[]" 
+                                               value="<?= htmlspecialchars($brand) ?>" 
+                                               id="brand-<?= htmlspecialchars($brand) ?>"
+                                               <?= in_array($brand, $_GET['brand'] ?? []) ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="brand-<?= htmlspecialchars($brand) ?>">
+                                            <?= htmlspecialchars($brand) ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-muted small">Không có thương hiệu nào</p>
+                            <?php endif; ?>
                         </div>
-                    <?php endif; ?>
-                </div>
-            </div>
+                    </div>
 
-            <hr>
+                    <hr>
 
-            <!-- ========== 3. STORAGE FILTER ========== -->
-            <div class="filter-section mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="bi bi-sd-card text-primary"></i> Storage
-                </h6>
-                <div class="filter-options">
-                    <?php if (!empty($filterOptions['storages'])): ?>
-                        <?php foreach($filterOptions['storages'] as $storage): ?>
-                            <div class="form-check">
-                                <input class="form-check-input" 
-                                       type="checkbox" 
-                                       name="storage[]" 
-                                       value="<?= htmlspecialchars($storage) ?>" 
-                                       id="storage-<?= htmlspecialchars($storage) ?>"
-                                       <?= in_array($storage, $_GET['storage'] ?? []) ? 'checked' : '' ?>>
-                                <label class="form-check-label" for="storage-<?= htmlspecialchars($storage) ?>">
-                                    <?= htmlspecialchars($storage) ?>
-                                </label>
+                    <!-- ========== 2. CATEGORY FILTER ========== -->
+                    <div class="filter-section mb-4">
+                        <h6 class="fw-bold mb-3" style="color: #2b2f36;">
+                            <i class="bi bi-grid-3x3-gap" style="color: #DC143C;"></i> Danh Mục
+                        </h6>
+                        <div class="filter-options">
+                            <?php if (!empty($filterOptions['categories'])): ?>
+                                <?php foreach($filterOptions['categories'] as $cat): ?>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" 
+                                               type="radio" 
+                                               name="category" 
+                                               value="<?= htmlspecialchars($cat) ?>" 
+                                               id="cat-<?= htmlspecialchars($cat) ?>"
+                                               <?= (isset($_GET['category']) && $_GET['category'] == $cat) ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="cat-<?= htmlspecialchars($cat) ?>">
+                                            <?= htmlspecialchars($cat) ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                                <!-- Option to show all categories -->
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" 
+                                           type="radio" 
+                                           name="category" 
+                                           value="" 
+                                           id="cat-all"
+                                           <?= !isset($_GET['category']) ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="cat-all">
+                                        Tất Cả Danh Mục
+                                    </label>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- ========== 3. STORAGE FILTER ========== -->
+                    <div class="filter-section mb-4">
+                        <h6 class="fw-bold mb-3" style="color: #2b2f36;">
+                            <i class="bi bi-hdd" style="color: #DC143C;"></i> Dung Lượng Lưu Trữ
+                        </h6>
+                        <div class="filter-options">
+                            <?php if (!empty($filterOptions['storages'])): ?>
+                                <?php foreach($filterOptions['storages'] as $storage): ?>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="storage[]" 
+                                               value="<?= htmlspecialchars($storage) ?>" 
+                                               id="storage-<?= htmlspecialchars($storage) ?>"
+                                               <?= in_array($storage, $_GET['storage'] ?? []) ? 'checked' : '' ?>>
+                                        <label class="form-check-label" for="storage-<?= htmlspecialchars($storage) ?>">
+                                            <?= htmlspecialchars($storage) ?>
+                                        </label>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- ========== 4. PRICE RANGE FILTER ========== -->
+                    <div class="filter-section mb-4">
+                        <h6 class="fw-bold mb-3" style="color: #2b2f36;">
+                            <i class="bi bi-currency-dollar" style="color: #DC143C;"></i> Khoảng Giá
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" 
+                                       class="form-control form-control-sm" 
+                                       name="price_min" 
+                                       placeholder="Min (đ)" 
+                                       value="<?= isset($_GET['price_min']) ? htmlspecialchars($_GET['price_min']) : '' ?>"
+                                       min="0"
+                                       step="100"
+                                       style="border-color: #e2e6ea; border-radius: 10px;">
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <hr>
-
-            <!-- ========== 4. PRICE RANGE FILTER ========== -->
-            <div class="filter-section mb-4">
-                <h6 class="fw-bold mb-3">
-                    <i class="bi bi-currency-dollar text-primary"></i> Price Range
-                </h6>
-                <div class="row g-2">
-                    <div class="col-6">
-                        <input type="number" 
-                               class="form-control form-control-sm" 
-                               name="price_min" 
-                               placeholder="Min (đ)" 
-                               value="<?= isset($_GET['price_min']) ? htmlspecialchars($_GET['price_min']) : '' ?>"
-                               min="0"
-                               step="100">
+                            <div class="col-6">
+                                <input type="number" 
+                                       class="form-control form-control-sm" 
+                                       name="price_max" 
+                                       placeholder="Max (đ)" 
+                                       value="<?= isset($_GET['price_max']) ? htmlspecialchars($_GET['price_max']) : '' ?>"
+                                       min="0"
+                                       step="100"
+                                       style="border-color: #e2e6ea; border-radius: 10px;">
+                            </div>
+                        </div>
+                        <small class="text-muted">Nhập giá theo VND (đ)</small>
                     </div>
-                    <div class="col-6">
-                        <input type="number" 
-                               class="form-control form-control-sm" 
-                               name="price_max" 
-                               placeholder="Max (đ)" 
-                               value="<?= isset($_GET['price_max']) ? htmlspecialchars($_GET['price_max']) : '' ?>"
-                               min="0"
-                               step="100">
+
+                    <hr>
+
+                    <!-- ========== ACTION BUTTONS ========== -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn fw-bold" style="background: linear-gradient(135deg, #DC143C 0%, #B22222 100%); color: #fff; border-radius: 10px; box-shadow: 0 8px 20px rgba(220, 20, 60, 0.18);">
+                            <i class="bi bi-check-circle"></i> Áp Dụng Bộ Lọc
+                        </button>
+                        <a href="?page=shop" class="btn btn-outline-secondary fw-bold" style="border-radius: 10px;">
+                            <i class="bi bi-x-circle"></i> Xóa Tất Cả Bộ Lọc
+                        </a>
                     </div>
-                </div>
-                <small class="text-muted">Enter price in VND (đ)</small>
+                </form>
             </div>
-
-            <hr>
-
-            <!-- ========== ACTION BUTTONS ========== -->
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> Apply Filters
-                </button>
-                <a href="?page=shop" class="btn btn-outline-secondary">
-                    <i class="bi bi-x-circle"></i> Clear All Filters
-                </a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -239,9 +275,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                         
                         <div class="product-image-wrapper">
                             <?php 
-                                $imgUrl = (strpos($product['image'], 'http') === 0) 
-                                    ? $product['image'] 
-                                    : 'assets/img/' . $product['image']; 
+                                $imgUrl = resolveImagePath($product['image']); 
                             ?>
                             <a href="?page=product&id=<?= $product['id'] ?>" class="product-image-link">
                                 <img src="<?= htmlspecialchars($imgUrl) ?>" 
@@ -250,20 +284,12 @@ $isLoggedIn = isset($_SESSION['user_id']);
                              </a>
                         
                             <div class="product-overlay">
-                                <button class="overlay-btn add-to-cart-btn" 
+                                <button type="button" class="btn-add-cart overlay-btn add-to-cart-btn" 
                                         data-product-id="<?= $product['id'] ?>"
                                         data-quantity="1"
                                         title="Add to cart">
-                                    <i class="bi bi-cart-plus"></i> Add to cart
+                                    Thêm Vào Giỏ
                                 </button>
-                                <div class="product-actions">
-                                    <a href="#" class="action-link">
-                                        <i class="bi bi-share-fill"></i> Share
-                                    </a>
-                                    <a href="#" class="action-link">
-                                        <i class="bi bi-heart"></i> Like
-                                    </a>
-                                </div>
                             </div>
                         </div>
 
@@ -287,7 +313,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12 text-center py-5">
-                    <p class="text-muted"><?php echo htmlspecialchars(getSetting('shop.no_products_message', 'No products found.')); ?></p>
+                    <p class="text-muted"><?php echo htmlspecialchars(getSetting('shop.no_products_message', 'Không tìm thấy sản phẩm nào.')); ?></p>
                 </div>
             <?php endif; ?>
 
@@ -306,7 +332,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                 <?php if ($page > 1): ?>
                     <a href="?<?= $baseQuery ?>&p=<?= $page - 1 ?>" 
                        class="btn btn-light border">
-                        <i class="bi bi-chevron-left"></i> Prev
+                        <i class="bi bi-chevron-left"></i> Trước
                     </a>
                 <?php endif; ?>
                 
@@ -345,7 +371,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                 <?php if ($page < $totalPages): ?>
                     <a href="?<?= $baseQuery ?>&p=<?= $page + 1 ?>" 
                        class="btn btn-light border">
-                        Next <i class="bi bi-chevron-right"></i>
+                        Tiếp theo <i class="bi bi-chevron-right"></i>
                     </a>
                 <?php endif; ?>
             </div>
@@ -359,23 +385,23 @@ $isLoggedIn = isset($_SESSION['user_id']);
         <div class="row text-center">
             <div class="col-md-3 mb-3">
                 <i class="bi bi-trophy fs-2 text-dark"></i>
-                <h5 class="fw-bold mt-2">High Quality</h5>
-                <p class="text-muted small">crafted from top materials</p>
+                <h5 class="fw-bold mt-2">Chất Lượng Cao</h5>
+                <p class="text-muted small">Chế tạo từ những vật liệu hàng đầu</p>
             </div>
             <div class="col-md-3 mb-3">
                 <i class="bi bi-shield-check fs-2 text-dark"></i>
-                <h5 class="fw-bold mt-2">Warranty Protection</h5>
-                <p class="text-muted small">Over 2 years</p>
+                <h5 class="fw-bold mt-2">Bảo Hành Toàn Diện</h5>
+                <p class="text-muted small">Trên 2 năm</p>
             </div>
             <div class="col-md-3 mb-3">
                 <i class="bi bi-box-seam fs-2 text-dark"></i>
-                <h5 class="fw-bold mt-2">Free Shipping</h5>
-                <p class="text-muted small">Order over 150 $</p>
+                <h5 class="fw-bold mt-2">Miễn Phí Vận Chuyển</h5>
+                <p class="text-muted small">Mẫu hàng từ 5 triệu</p>
             </div>
             <div class="col-md-3 mb-3">
                 <i class="bi bi-headset fs-2 text-dark"></i>
-                <h5 class="fw-bold mt-2">24 / 7 Support</h5>
-                <p class="text-muted small">Dedicated support</p>
+                <h5 class="fw-bold mt-2">Hỗ Trợ 24/7</h5>
+                <p class="text-muted small">Hỗ trợ tự độc lập</p>
             </div>
         </div>
     </div>

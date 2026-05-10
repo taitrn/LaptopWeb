@@ -10,13 +10,14 @@ class ShopController {
         $sort = isset($_GET['sort']) ? $_GET['sort'] : 'default';
 
         // Pagination
-        $limit  = 8;
+        $limit  = 20;
         $page   = isset($_GET['p']) ? (int)$_GET['p'] : 1;
         if ($page < 1) $page = 1;
         $offset = ($page - 1) * $limit;
 
         // Filters
         $filters = [
+            'search'    => isset($_GET['search']) ? trim($_GET['search']) : null,
             'brand'     => isset($_GET['brand']) && is_array($_GET['brand']) ? $_GET['brand'] : [],
             'category'  => isset($_GET['category']) ? $_GET['category'] : null,
             'storage'   => isset($_GET['storage']) && is_array($_GET['storage']) ? $_GET['storage'] : [],
