@@ -1,13 +1,13 @@
 <?php
 // views/admin/manage_posts.php
 include 'views/layouts/admin_header.php';
-require_once 'config/db.php';
-$pdo = Database::getConnection();
+require_once 'models/PostModel.php';
+$postModel = new PostModel();
 
-// Get stats for the page
-$totalPosts = $pdo->query("SELECT COUNT(*) FROM articles")->fetchColumn();
-$publishedPosts = $pdo->query("SELECT COUNT(*) FROM articles WHERE published_at IS NOT NULL AND published_at <= NOW()")->fetchColumn();
-$draftPosts = $pdo->query("SELECT COUNT(*) FROM articles WHERE published_at IS NULL OR published_at > NOW()")->fetchColumn();
+// Get stats for the page using model if possible or at least after model ensures schema
+$totalPosts = $postModel->countPostsForAdmin();
+$publishedPosts = $postModel->countPostsForAdmin('published');
+$draftPosts = $postModel->countPostsForAdmin('draft');
 ?>
 
 <div class="main-content-inner">
@@ -215,7 +215,7 @@ $draftPosts = $pdo->query("SELECT COUNT(*) FROM articles WHERE published_at IS N
             automatic_uploads: true,
             relative_urls: false,
             remove_script_host: false,
-            document_base_url: 'http://localhost/store/',
+            document_base_url: 'http://localhost/store/FE/',
             content_style: 'body { font-family:Inter,Helvetica,Arial,sans-serif; font-size:16px; line-height: 1.6; color: #333; } img { max-width: 100%; height: auto; border-radius: 8px; }',
             image_advtab: true,
             image_title: true,

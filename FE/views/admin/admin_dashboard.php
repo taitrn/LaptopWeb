@@ -1,25 +1,30 @@
 <?php 
-require_once 'config/db.php';
+require_once 'models/PostModel.php';
+require_once 'models/ProductModel.php';
+require_once 'models/OrderModel.php';
+require_once 'models/ContactModel.php';
+require_once 'models/UserModel.php';
+require_once 'models/ProductReviewModel.php';
+
+$postModel = new PostModel();
+$productModel = new ProductModel();
+$orderModel = new OrderModel();
+$contactModel = new ContactModel();
+$userModel = new UserModel();
+$reviewModel = new ProductReviewModel();
+
 $pdo = Database::getConnection();
   
 // Get stats
 $stats = [];
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM products");
-$stats['products'] = $stmt->fetch()['total'];
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM orders");
-$stats['orders'] = $stmt->fetch()['total'];
-$stmt = $pdo->query("SELECT SUM(final_amount) as revenue FROM orders WHERE status = 'completed'");
-$stats['revenue'] = $stmt->fetch()['revenue'] ?? 0;
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM orders WHERE status = 'pending'");
-$stats['pending_orders'] = $stmt->fetch()['total'];
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM contacts WHERE status = 'unread'");
-$stats['unread_contacts'] = $stmt->fetch()['total'];
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM users");
-$stats['users'] = $stmt->fetch()['total'];
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM articles WHERE published_at IS NOT NULL");
-$stats['posts'] = $stmt->fetch()['total'];
-$stmt = $pdo->query("SELECT COUNT(*) as total FROM reviews");
-$stats['reviews'] = $stmt->fetch()['total'];
+$stats['products'] = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
+$stats['orders'] = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
+$stats['revenue'] = $pdo->query("SELECT SUM(final_amount) FROM orders WHERE status = 'completed'")->fetchColumn() ?: 0;
+$stats['pending_orders'] = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'")->fetchColumn();
+$stats['unread_contacts'] = $pdo->query("SELECT COUNT(*) FROM contacts WHERE status = 'unread'")->fetchColumn();
+$stats['users'] = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+$stats['posts'] = $pdo->query("SELECT COUNT(*) FROM articles WHERE published_at IS NOT NULL")->fetchColumn();
+$stats['reviews'] = $pdo->query("SELECT COUNT(*) FROM reviews")->fetchColumn();
 
 $stmt = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC LIMIT 5");
 $recent_orders = $stmt->fetchAll();
