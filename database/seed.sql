@@ -25,6 +25,7 @@ INSERT INTO membership_tiers (id, name, min_points, discount_percent) VALUES
 (4, 'S-Vip',     2000, 5.00);
 
 -- =============================================
+<<<<<<< HEAD
 -- Seed Coupons
 INSERT INTO coupons (code, discount_percent, is_active, description) VALUES
 ('LAPTOP10', 10.00, 1, 'Giảm giá 10% cho đơn hàng.'),
@@ -34,6 +35,7 @@ INSERT INTO coupons (code, discount_percent, is_active, description) VALUES
 ('BLACKFRIDAY', 30.00, 1, 'Giảm giá 30% ngày Black Friday.');
 
 -- =============================================
+=======
 -- Seed Users, Admins, Members
 -- All passwords = Admin@123
 -- Hash generated with PHP password_hash('Admin@123', PASSWORD_BCRYPT)
@@ -67,6 +69,7 @@ INSERT INTO categories (id, name, slug, is_featured) VALUES
 (4, 'MacBook',          'macbook',          1);
 
 INSERT INTO brands (id, name, slug) VALUES
+<<<<<<< HEAD
 (1, 'Asus',     'asus'),
 (2, 'Dell',     'dell'),
 (3, 'HP',       'hp'),
@@ -166,6 +169,26 @@ INSERT INTO product_variants (id, product_id, sku_code, ram, color, storage, qua
 (38, 38, 'MAC-AIR15-M3-24','8GB',  'Starlight',  '256GB SSD', 11, 35500000.00, 'assets/img/products/product_1.webp'),
 (39, 39, 'MAC-MAX14-24',   '18GB', 'Space Gray', '1TB SSD',    9, 52000000.00, 'assets/img/products/product_1.webp'),
 (40, 40, 'MAC-MAX16-24',   '24GB', 'Space Gray', '1TB SSD',    8, 57990000.00, 'assets/img/products/product_1.webp');
+=======
+(1, 'Asus',  'asus'),
+(2, 'Dell',  'dell'),
+(3, 'HP',    'hp'),
+(4, 'Apple', 'apple');
+
+-- =============================================
+-- Seed Products & Variants
+-- =============================================
+INSERT INTO products (id, category_id, brand_id, name, slug, short_description, is_featured) VALUES
+(1, 1, 1, 'Asus ROG Strix G15', 'asus-rog-strix-g15', 'Co may choi game thuc thu',     1),
+(2, 2, 2, 'Dell Inspiron 15',   'dell-inspiron-15',   'Laptop van phong ben bi',        1),
+(3, 4, 4, 'MacBook Air M2',     'macbook-air-m2',     'Sieu mong nhe, hieu nang manh',  1);
+
+INSERT INTO product_variants (id, product_id, sku_code, ram, color, storage, quantity, base_price) VALUES
+(1, 1, 'ROG-G15-8GB-BLK',   '8GB',  'Black',    '512GB SSD', 10, 25000000.00),
+(2, 1, 'ROG-G15-16GB-BLK',  '16GB', 'Black',    '512GB SSD',  5, 27500000.00),
+(3, 2, 'DELL-INS-8GB-SIL',  '8GB',  'Silver',   '256GB SSD', 20, 15000000.00),
+(4, 3, 'MAC-M2-8GB-MID',    '8GB',  'Midnight', '256GB SSD',  8, 28000000.00);
+>>>>>>> kim
 
 -- =============================================
 -- Seed FAQs (required by spec task #2)

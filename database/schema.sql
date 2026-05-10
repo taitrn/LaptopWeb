@@ -167,6 +167,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+<<<<<<< HEAD
 CREATE TABLE IF NOT EXISTS coupons (
     id               INT           AUTO_INCREMENT PRIMARY KEY,
     code             VARCHAR(50)   NOT NULL UNIQUE,
@@ -177,6 +178,7 @@ CREATE TABLE IF NOT EXISTS coupons (
     updated_at       TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+=======
 -- =============================================
 -- CONTENT
 -- =============================================
