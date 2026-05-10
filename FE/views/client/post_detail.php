@@ -25,7 +25,7 @@ require_once 'helpers/settings_helper.php';
         
         .comment-section { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-top: 60px; }
         .comment-form textarea { border-radius: 15px; padding: 15px; border: 1px solid #eee; background: #fdfdfd; }
-        .comment-form textarea:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.1); }
+        .comment-form textarea:focus { border-color: #d70018; box-shadow: 0 0 0 0.25rem rgba(215,0,24,0.1); }
         
         .comment-item { padding: 25px 0; border-bottom: 1px solid #f1f1f1; }
         .comment-item:last-child { border-bottom: none; }
@@ -35,7 +35,7 @@ require_once 'helpers/settings_helper.php';
         .comment-text { margin-top: 10px; color: #495057; line-height: 1.6; }
         .comment-actions { margin-top: 10px; display: flex; gap: 15px; font-size: 0.85rem; }
         .comment-actions a { color: #6c757d; text-decoration: none; cursor: pointer; }
-        .comment-actions a:hover { color: #0d6efd; }
+        .comment-actions a:hover { color: #d70018; }
         
         .sidebar-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 30px; }
         .related-item { display: flex; gap: 15px; margin-bottom: 20px; text-decoration: none; color: inherit; transition: opacity 0.2s; }
@@ -82,7 +82,7 @@ require_once 'helpers/settings_helper.php';
                 <!-- Share -->
                 <div class="d-flex align-items-center gap-3 py-4 border-top border-bottom my-5">
                     <span class="fw-bold">Chia sẻ bài viết:</span>
-                    <a href="#" class="btn btn-outline-primary btn-sm rounded-circle"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-outline-danger btn-sm rounded-circle"><i class="bi bi-facebook"></i></a>
                     <a href="#" class="btn btn-outline-info btn-sm rounded-circle text-info"><i class="bi bi-twitter-x"></i></a>
                     <a href="#" class="btn btn-outline-secondary btn-sm rounded-circle"><i class="bi bi-link-45deg"></i></a>
                 </div>
@@ -99,7 +99,7 @@ require_once 'helpers/settings_helper.php';
                                     <textarea name="content" class="form-control" rows="4" placeholder="Chia sẻ suy nghĩ của bạn về bài viết này..." required></textarea>
                                 </div>
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold">
+                                    <button type="submit" class="btn btn-danger px-4 py-2 fw-bold">
                                         <i class="bi bi-send me-2"></i>Gửi bình luận
                                     </button>
                                 </div>
@@ -107,7 +107,7 @@ require_once 'helpers/settings_helper.php';
                         <?php else: ?>
                             <div class="alert alert-light border text-center py-4 rounded-4">
                                 <p class="mb-3">Vui lòng đăng nhập để gửi bình luận.</p>
-                                <a href="?page=login_signup" class="btn btn-primary px-4">Đăng nhập ngay</a>
+                                <a href="?page=login_signup" class="btn btn-danger px-4">Đăng nhập ngay</a>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -147,7 +147,7 @@ require_once 'helpers/settings_helper.php';
                         <input type="hidden" name="page" value="post">
                         <div class="input-group">
                             <input type="text" name="search" class="form-control border-end-0" placeholder="Tìm bài viết...">
-                            <button class="btn btn-outline-primary border-start-0" type="submit">
+                            <button class="btn btn-outline-danger border-start-0" type="submit">
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>

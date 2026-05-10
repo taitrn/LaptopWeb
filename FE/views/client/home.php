@@ -21,8 +21,8 @@ include 'views/layouts/header.php';
                         ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-trade-in.svg', 'parts' => [['text'=>'Thu cũ đổi mới', 'href'=>'#']]],
                         ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-used-goods.svg', 'parts' => [['text'=>'Hàng cũ', 'href'=>'#']]],
                         ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-promotions.svg', 'parts' => [['text'=>'Khuyến mãi', 'href'=>'#']]],
-                        ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-tech-news.svg', 'parts' => [['text'=>'Tin công nghệ', 'href'=>'#']]],
-                        ['src' => 'assets/img/qna.svg', 'parts' => [['text'=>'Hỏi đáp', 'href'=>'http://localhost/LaptopWeb/FE/index.php?page=qna']]]
+                        ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-tech-news.svg', 'parts' => [['text'=>'Tin công nghệ', 'href'=>'index.php?page=post']]],
+                        ['src' => 'assets/img/qna.svg', 'parts' => [['text'=>'Hỏi đáp', 'href'=>'index.php?page=qna']]]
                     ];
                     
                     foreach ($leftCats as $c): ?>

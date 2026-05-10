@@ -14,12 +14,12 @@ require_once 'helpers/settings_helper.php';
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         :root {
-            --primary-color: #0d6efd;
+            --primary-color: #d70018;
             --text-muted: #6c757d;
         }
         body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
         .article-hero {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            background: linear-gradient(135deg, #d70018 0%, #a50012 100%);
             color: white;
             padding: 60px 0;
             margin-bottom: 40px;
@@ -71,7 +71,7 @@ require_once 'helpers/settings_helper.php';
             position: absolute;
             top: 15px;
             left: 15px;
-            background: rgba(13, 110, 253, 0.9);
+            background: rgba(215, 0, 24, 0.9);
             color: white;
             padding: 5px 15px;
             border-radius: 50px;
@@ -146,7 +146,7 @@ require_once 'helpers/settings_helper.php';
                         placeholder="Tìm kiếm bài viết theo từ khóa..." 
                         aria-label="Search"
                     />
-                    <button type="submit" class="btn btn-primary px-4">
+                    <button type="submit" class="btn btn-danger px-4">
                         <i class="bi bi-search me-2"></i>Tìm kiếm
                     </button>
                 </form>
@@ -193,7 +193,7 @@ require_once 'helpers/settings_helper.php';
             <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
             <h3 class="mt-3">Không tìm thấy bài viết nào</h3>
             <p class="text-muted">Thử thay đổi từ khóa tìm kiếm của bạn.</p>
-            <button class="btn btn-primary mt-2" onclick="location.reload()">Xem tất cả bài viết</button>
+            <button class="btn btn-danger mt-2" onclick="location.reload()">Xem tất cả bài viết</button>
         </div>
     </div>
     
