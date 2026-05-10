@@ -85,8 +85,20 @@ try {
         'site_logo' => 'logo',
         'banner_1_image' => 'banner1',
         'banner_2_image' => 'banner2',
+        'banner_3_image' => 'banner3',
+        'banner_4_image' => 'banner4',
+        'sub_banner_1_image' => 'sub_banner1',
+        'sub_banner_2_image' => 'sub_banner2',
+        'sub_banner_3_image' => 'sub_banner3',
+        'right_sidebar_image' => 'right_sidebar',
+        'promo_strip_image' => 'promo_strip',
+        'featured_sidebar_image' => 'featured_sidebar',
+        'home_promo_strip_image' => 'promo_strip',
+        'home_featured_sidebar_image' => 'featured_sidebar',
         'home_banner_1_image' => 'banner1',
         'home_banner_2_image' => 'banner2',
+        'home_banner_3_image' => 'banner3',
+        'home_banner_4_image' => 'banner4',
         'general_site_logo' => 'logo'
     ];
 

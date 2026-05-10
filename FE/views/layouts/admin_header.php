@@ -7,11 +7,18 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     exit();
 }
 ?>
+<?php
+require_once 'helpers/settings_helper.php';
+$siteName = getSetting('general.site_name', 'LaptopShop');
+$logoPath = getSetting('general.site_logo', 'assets/img/logo.png');
+$siteLogo = getImageUrl($logoPath);
+?>
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>CellphoneS - Admin Dashboard</title>
+    <title><?= htmlspecialchars($siteName) ?> - Quản trị hệ thống</title>
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars($siteLogo) ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,6 +31,7 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     <link rel="stylesheet" href="assets/srtdash/css/default-css.css">
     <link rel="stylesheet" href="assets/srtdash/css/styles.css">
     <link rel="stylesheet" href="assets/srtdash/css/responsive.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     
     <!-- Custom styling to override Srtdash with CellphoneS primary red -->
     <style>
@@ -73,7 +81,7 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                         </div>
                         <div class="search-box float-start">
                             <form action="#">
-                                <input type="text" name="search" placeholder="Search..." required>
+                                <input type="text" name="search" placeholder="Tìm kiếm..." required>
                                 <i class="ti-search"></i>
                             </form>
                         </div>
@@ -93,7 +101,7 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                 <div class="row align-items-center">
                     <div class="col-sm-6">
                         <div class="breadcrumbs-area clearfix">
-                            <h4 class="page-title float-start">Admin Panel</h4>
+                            <h4 class="page-title float-start">Bảng điều khiển</h4>
                         </div>
                     </div>
                     <div class="col-sm-6 clearfix">
@@ -103,8 +111,8 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                                 <?= htmlspecialchars($_SESSION['username'] ?? 'Admin') ?> <i class="fa-solid fa-angle-down"></i>
                             </h4>
                             <div class="dropdown-menu user-dropdown">
-                                <a class="dropdown-item" href="?page=home">Back to Site</a>
-                                <a class="dropdown-item" href="?page=logout">Log Out</a>
+                                <a class="dropdown-item" href="?page=home">Về trang chủ</a>
+                                <a class="dropdown-item" href="?page=logout">Đăng xuất</a>
                             </div>
                         </div>
                     </div>
@@ -112,4 +120,3 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
             </div>
             <!-- page title area end -->
             
-            <div class="main-content-inner">

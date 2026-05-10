@@ -5,8 +5,6 @@ let currentLimit = 10;
 let deleteTargetId = null;
 
 const tableBody   = document.querySelector("#contactTable tbody");
-const viewModal   = new bootstrap.Modal(document.getElementById("viewContactModal"));
-const deleteModal  = new bootstrap.Modal(document.getElementById("deleteContactModal"));
 
 // ======================== INIT ========================
 document.addEventListener("DOMContentLoaded", () => {
@@ -37,12 +35,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const fd = new FormData();
         fd.append("id", deleteTargetId);
         try {
-            const res = await fetch("controllers/ContactController.php?action=delete", { method: "POST", body: fd });
+            const res = await fetch("ajax/send_contact.php?action=delete", { method: "POST", body: fd });
             const r = await res.json();
-            if (r.success) fetchContacts();
-            else alert(r.message);
-        } catch (e) { console.error(e); }
-        deleteModal.hide();
+            if (r.success) {
+                showToast('success', 'Đã xoá liên hệ thành công');
+                fetchContacts();
+            }
+            else showToast('error', r.message || 'Xoá thất bại');
+        } catch (e) { console.error(e); showToast('error', 'Lỗi kết nối'); }
+        
+        // Hide modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteContactModal'));
+        if (modal) modal.hide();
         deleteTargetId = null;
     });
 });
@@ -61,18 +65,19 @@ async function fetchContacts() {
     if (status) params.set('status', status);
 
     try {
-        const res = await fetch(`controllers/ContactController.php?${params}`);
+        const res = await fetch(`ajax/send_contact.php?${params}`);
         const result = await res.json();
 
         if (result.success) {
             renderTable(result.data.items, result.data);
             renderPagination(result.data);
-            document.getElementById("contactTotal").textContent = `${result.data.total} contacts`;
+            document.getElementById("contactTotal").textContent = `${result.data.total} liên hệ`;
             document.getElementById("contactPaginationInfo").textContent =
-                `Showing ${result.data.items.length} of ${result.data.total} (Page ${result.data.page}/${result.data.total_pages || 1})`;
+                `Hiển thị ${result.data.items.length} / ${result.data.total} (Trang ${result.data.page}/${result.data.total_pages || 1})`;
         }
     } catch (err) {
         console.error("Failed to fetch contacts:", err);
+        showToast('error', 'Không thể tải danh sách liên hệ');
     }
 }
 
@@ -81,38 +86,40 @@ function renderTable(items, meta) {
     tableBody.innerHTML = "";
 
     if (!items || items.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No contacts found.</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">Không tìm thấy liên hệ nào.</td></tr>';
         return;
     }
 
     const startNum = (meta.page - 1) * meta.limit;
 
     items.forEach((item, i) => {
-        const statusBadge = {
-            unread:  '<span class="badge bg-warning text-dark">Unread</span>',
-            read:    '<span class="badge bg-info">Read</span>',
-            replied: '<span class="badge bg-success">Replied</span>',
+        const statusLabels = {
+            unread:  '<span class="badge bg-warning text-dark">Chưa đọc</span>',
+            read:    '<span class="badge bg-info text-white">Đã đọc</span>',
+            replied: '<span class="badge bg-success">Đã phản hồi</span>',
         };
 
         const row = document.createElement("tr");
+        if (item.status === 'unread') row.style.fontWeight = 'bold';
+        
         row.innerHTML = `
             <td>${startNum + i + 1}</td>
             <td>${escapeHtml(item.customer_name)}</td>
             <td><small>${escapeHtml(item.customer_email)}</small></td>
-            <td><small class="text-truncate d-inline-block" style="max-width:150px">${escapeHtml(item.subject || '(no subject)')}</small></td>
+            <td><small class="text-truncate d-inline-block" style="max-width:150px">${escapeHtml(item.subject || '(không có)')}</small></td>
             <td><small>${formatDate(item.created_at)}</small></td>
             <td>
-                <select class="form-select form-select-sm contact-status" data-id="${item.id}" style="width:110px">
-                    <option value="unread"  ${item.status === "unread" ? "selected" : ""}>Unread</option>
-                    <option value="read"    ${item.status === "read" ? "selected" : ""}>Read</option>
-                    <option value="replied" ${item.status === "replied" ? "selected" : ""}>Replied</option>
+                <select class="form-select form-select-sm contact-status" data-id="${item.id}" style="width:120px">
+                    <option value="unread"  ${item.status === "unread" ? "selected" : ""}>Chưa đọc</option>
+                    <option value="read"    ${item.status === "read" ? "selected" : ""}>Đã đọc</option>
+                    <option value="replied" ${item.status === "replied" ? "selected" : ""}>Đã phản hồi</option>
                 </select>
             </td>
             <td>
-                <button class="btn btn-sm btn-outline-primary btn-view me-1" data-id="${item.id}" title="View">
+                <button class="btn btn-sm btn-outline-primary btn-view me-1" data-id="${item.id}" title="Xem chi tiết">
                     <i class="bi bi-eye"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${item.id}" title="Delete">
+                <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${item.id}" title="Xoá">
                     <i class="bi bi-trash"></i>
                 </button>
             </td>
@@ -162,15 +169,26 @@ tableBody.addEventListener("click", async (e) => {
     // View
     if (btn.classList.contains("btn-view")) {
         try {
-            const res = await fetch(`controllers/ContactController.php?action=get&id=${id}`);
+            const res = await fetch(`ajax/send_contact.php?action=get&id=${id}`);
             const r = await res.json();
             if (r.success) {
                 document.getElementById("contactViewName").textContent  = r.data.customer_name;
                 document.getElementById("contactViewEmail").textContent = r.data.customer_email;
                 document.getElementById("contactViewDate").textContent  = formatDate(r.data.created_at);
-                document.getElementById("contactSubject").textContent   = r.data.subject || '(no subject)';
+                document.getElementById("contactSubject").textContent   = r.data.subject || '(không có chủ đề)';
                 document.getElementById("contactMessage").textContent   = r.data.message;
+                
+                const viewModal = new bootstrap.Modal(document.getElementById("viewContactModal"));
                 viewModal.show();
+                
+                // Auto-mark as read
+                if (r.data.status === 'unread') {
+                    const fd = new FormData();
+                    fd.append("id", id);
+                    fd.append("status", "read");
+                    await fetch("ajax/send_contact.php?action=updateStatus", { method: "POST", body: fd });
+                    fetchContacts();
+                }
             }
         } catch (err) { console.error(err); }
     }
@@ -178,6 +196,7 @@ tableBody.addEventListener("click", async (e) => {
     // Delete
     if (btn.classList.contains("btn-delete")) {
         deleteTargetId = id;
+        const deleteModal = new bootstrap.Modal(document.getElementById("deleteContactModal"));
         deleteModal.show();
     }
 });
@@ -191,12 +210,41 @@ tableBody.addEventListener("change", async (e) => {
         fd.append("id", id);
         fd.append("status", status);
         try {
-            const res = await fetch("controllers/ContactController.php?action=updateStatus", { method: "POST", body: fd });
+            const res = await fetch("ajax/send_contact.php?action=updateStatus", { method: "POST", body: fd });
             const r = await res.json();
-            if (!r.success) alert(r.message || "Failed to update");
-        } catch (err) { console.error(err); }
+            if (r.success) {
+                showToast('success', 'Cập nhật trạng thái thành công');
+                fetchContacts();
+            } else {
+                showToast('error', r.message || "Cập nhật thất bại");
+            }
+        } catch (err) { 
+            console.error(err); 
+            showToast('error', 'Lỗi kết nối');
+        }
     }
 });
+
+// ======================== TOAST ========================
+function showToast(type, message) {
+    document.querySelectorAll('.alert-toast').forEach(t => t.remove());
+    
+    const toast = document.createElement('div');
+    const bgClass = type === 'success' ? 'alert-success' : type === 'info' ? 'alert-info' : 'alert-danger';
+    toast.className = `alert ${bgClass} alert-dismissible alert-toast`;
+    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;min-width:300px;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+    
+    toast.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'info' ? 'info-circle' : 'exclamation-circle'} me-2 fs-5"></i>
+            <span>${message}</span>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
 
 // ======================== HELPERS ========================
 function escapeHtml(text) {

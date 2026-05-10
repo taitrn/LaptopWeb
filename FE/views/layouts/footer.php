@@ -12,9 +12,9 @@ if (!function_exists('getSetting')) {
       <div class="col-md-3 mb-4">
         <h5 class="cps-footer-title">Tổng đài hỗ trợ miễn phí</h5>
         <ul class="cps-footer-links">
-          <li>Gọi mua hàng: <strong><?php echo htmlspecialchars(getSetting('header.phone_number', '1800.0000')); ?></strong> (7h30 - 22h00)</li>
-          <li>Gọi khiếu nại: <strong>1800.0001</strong> (8h00 - 21h30)</li>
-          <li>Gọi bảo hành: <strong>1800.0002</strong> (8h00 - 21h00)</li>
+          <li>Gọi mua hàng: <strong><?php echo htmlspecialchars(getSetting('footer.phone_sales', '1800.2097')); ?></strong> (7h30 - 22h00)</li>
+          <li>Gọi khiếu nại: <strong><?php echo htmlspecialchars(getSetting('footer.phone_complaints', '1800.2063')); ?></strong> (8h00 - 21h30)</li>
+          <li>Gọi bảo hành: <strong><?php echo htmlspecialchars(getSetting('footer.phone_warranty', '1800.2064')); ?></strong> (8h00 - 21h00)</li>
         </ul>
         <h5 class="cps-footer-title mt-4">Phương thức thanh toán</h5>
         <div class="cps-payment-methods">
@@ -84,6 +84,31 @@ if (!function_exists('getSetting')) {
   </div>
 </footer>
 
+<!-- Floating Action Buttons -->
+<div class="floating-action-buttons d-flex flex-column gap-2" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    <button id="btnBackToTop" class="btn btn-dark shadow-sm align-items-center justify-content-center" style="border-radius: 20px; padding: 10px 18px; font-weight: 600; font-size: 14px; display: none; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.1);">
+        Lên đầu <i class="bi bi-chevron-double-up ms-1"></i>
+    </button>
+    <a href="index.php?page=contact" class="btn btn-danger shadow-sm d-flex align-items-center justify-content-center" style="border-radius: 20px; padding: 10px 18px; font-weight: 600; font-size: 14px; text-decoration: none; transition: all 0.3s ease;">
+        Liên hệ <i class="bi bi-headset ms-1"></i>
+    </a>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var btn = document.getElementById('btnBackToTop');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            btn.style.display = 'flex';
+        } else {
+            btn.style.display = 'none';
+        }
+    });
+    btn.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+});
+</script>
 <script>
 function handleNewsletter(e) {
     e.preventDefault();
@@ -100,7 +125,7 @@ function handleNewsletter(e) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
-<script src="assets/javascript/header.js"></script>
+<script src="assets/javascript/header.js?v=<?= time() ?>"></script>
 <script src="assets/javascript/product_detail.js"></script>
 <script src="assets/javascript/cart.js"></script>
 

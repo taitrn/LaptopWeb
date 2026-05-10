@@ -14,28 +14,34 @@ $currentPage = $_GET['page'] ?? 'admin_dashboard';
             <nav>
                 <ul class="metismenu" id="menu">
                     <li class="<?= $currentPage === 'admin_dashboard' ? 'active' : '' ?>">
-                        <a href="?page=admin_dashboard" aria-expanded="true"><i class="ti-dashboard"></i><span>Dashboard</span></a>
+                        <a href="?page=admin_dashboard"><i class="ti-dashboard"></i><span>Tổng quan</span></a>
                     </li>
                     <li class="<?= $currentPage === 'manage_products' ? 'active' : '' ?>">
-                        <a href="?page=manage_products" aria-expanded="true"><i class="ti-package"></i><span>Inventory</span></a>
+                        <a href="?page=manage_products"><i class="ti-package"></i><span>Sản phẩm</span></a>
                     </li>
                     <li class="<?= $currentPage === 'manage_orders' ? 'active' : '' ?>">
-                        <a href="?page=manage_orders" aria-expanded="true"><i class="ti-receipt"></i><span>Orders</span></a>
+                        <a href="?page=manage_orders"><i class="ti-receipt"></i><span>Đơn hàng</span></a>
+                    </li>
+                    <li class="<?= $currentPage === 'manage_contacts' ? 'active' : '' ?>">
+                        <a href="?page=manage_contacts"><i class="ti-email"></i><span>Liên hệ</span></a>
                     </li>
                     <li class="<?= $currentPage === 'manage_profile' ? 'active' : '' ?>">
-                        <a href="?page=manage_profile" aria-expanded="true"><i class="ti-user"></i><span>Customers</span></a>
+                        <a href="?page=manage_profile"><i class="ti-user"></i><span>Khách hàng</span></a>
                     </li>
-                    <li class="<?= $currentPage === 'manage_reviews' || $currentPage === 'admin_reviews' ? 'active' : '' ?>">
-                        <a href="?page=admin_reviews" aria-expanded="true"><i class="ti-star"></i><span>Reviews</span></a>
+                    <li class="<?= $currentPage === 'manage_reviews' ? 'active' : '' ?>">
+                        <a href="?page=manage_reviews"><i class="ti-star"></i><span>Đánh giá</span></a>
+                    </li>
+                    <li class="<?= $currentPage === 'manage_posts' ? 'active' : '' ?>">
+                        <a href="?page=manage_posts"><i class="ti-write"></i><span>Bài viết</span></a>
                     </li>
                     <li class="<?= $currentPage === 'manage_qna' ? 'active' : '' ?>">
-                        <a href="?page=manage_qna" aria-expanded="true"><i class="ti-help-alt"></i><span>Q&A</span></a>
+                        <a href="?page=manage_qna"><i class="ti-help-alt"></i><span>Hỏi & Đáp</span></a>
                     </li>
-                    <li class="<?= $currentPage === 'manage_about_info' || $currentPage === 'manage_info' ? 'active' : '' ?>">
-                        <a href="javascript:void(0)" aria-expanded="true"><i class="ti-settings"></i><span>Settings</span></a>
+                    <li class="<?= in_array($currentPage, ['manage_about_info', 'manage_info']) ? 'active' : '' ?>">
+                        <a href="javascript:void(0)"><i class="ti-settings"></i><span>Cài đặt</span></a>
                         <ul class="collapse <?= in_array($currentPage, ['manage_about_info', 'manage_info']) ? 'in' : '' ?>">
-                            <li class="<?= $currentPage === 'manage_info' ? 'active' : '' ?>"><a href="?page=manage_info">Site Settings</a></li>
-                            <li class="<?= $currentPage === 'manage_about_info' ? 'active' : '' ?>"><a href="?page=manage_about_info">About Page</a></li>
+                            <li class="<?= $currentPage === 'manage_info' ? 'active' : '' ?>"><a href="?page=manage_info">Thông tin trang</a></li>
+                            <li class="<?= $currentPage === 'manage_about_info' ? 'active' : '' ?>"><a href="?page=manage_about_info">Trang giới thiệu</a></li>
                         </ul>
                     </li>
                 </ul>
