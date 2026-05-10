@@ -3662,6 +3662,7 @@ html {
   min-height: 60px;
 }
 
+@media (min-width: 992px) {
 .cellphones-header.is-scrolled .header-promo {
   height: 0;
   min-height: 0;
@@ -3680,6 +3681,7 @@ html {
 .cellphones-header.is-scrolled .header-main .container-fluid {
   padding-top: 4px;
   padding-bottom: 4px;
+}
 }
 
 .header-main .container,

@@ -11,14 +11,16 @@ $input = json_decode(file_get_contents('php://input'), true);
 $reviewId = $input['review_id'] ?? null;
 $status = $input['status'] ?? null;
 
-if (!$reviewId || !in_array($status, ['pending', 'approved', 'rejected'])) {
+// The database enum is 'reject', but the UI might send 'rejected'.
+// We normalize it here and in the model.
+if (!$reviewId || !in_array($status, ['pending', 'approved', 'rejected', 'reject'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid parameters']);
     exit;
 }
 
 require_once __DIR__ . '/../../models/ProductReviewModel.php';
 
-$reviewModel = new ProductReviewModel(); // auto-connects via BaseModel
+$reviewModel = new ProductReviewModel();
 
 $success = $reviewModel->updateReviewStatus($reviewId, $status);
 

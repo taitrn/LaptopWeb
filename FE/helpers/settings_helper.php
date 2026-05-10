@@ -78,12 +78,14 @@ function getImageUrl($imagePath) {
         return '';
     }
     
-    // Check if file exists
-    if (file_exists($imagePath)) {
-        $timestamp = filemtime($imagePath);
+    // Check if file exists using absolute path to ensure timestamp is correct
+    $fullPath = dirname(__DIR__) . '/' . $imagePath;
+    
+    if (file_exists($fullPath)) {
+        $timestamp = filemtime($fullPath);
         return $imagePath . '?v=' . $timestamp;
     }
     
-    // If file doesn't exist, return with default version
-    return $imagePath . '?v=1';
+    // If file doesn't exist, return with unique timestamp to avoid cache
+    return $imagePath . '?v=' . time();
 }

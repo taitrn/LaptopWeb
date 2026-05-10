@@ -91,7 +91,9 @@ class SettingModel extends BaseModel {
         $stmt = $this->db->prepare($sql);
 
         foreach ($settings as $rawKey => $value) {
-            $dotKey = preg_replace('/^([a-z]+)_/', '$1.', $rawKey, 1);
+            // Replace the first underscore with a dot to separate group from key
+            // Matches alphanumeric group followed by an underscore
+            $dotKey = preg_replace('/^([a-z0-9]+)_/', '$1.', $rawKey, 1);
             $stmt->execute([$dotKey, (string)$value]);
         }
         $this->cache = null;

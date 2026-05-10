@@ -33,24 +33,63 @@ $siteLogo = getImageUrl($logoPath);
 
     <link rel="stylesheet" href="assets/css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="assets/css/admin.css?v=<?= time() ?>">
+    <style>
+        @media (max-width: 991.98px) {
+            .cellphones-header {
+                height: 65px !important;
+                min-height: 65px !important;
+                padding: 0 !important;
+            }
+            .header-main {
+                height: 65px !important;
+                min-height: 65px !important;
+                padding: 0 !important;
+            }
+            .header-main .container {
+                height: 65px !important;
+                flex-wrap: nowrap !important;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                align-items: center !important;
+            }
+            .brand-logo img {
+                height: 30px !important;
+                width: auto !important;
+            }
+            .header-search {
+                margin: 0 10px !important;
+            }
+        }
+    </style>
 </head>
 <body>
 <div id="page-overlay" class="page-overlay"></div>
 
 <!-- CellphoneS-style Header -->
 <header id="header" class="cellphones-header sticky-top">
+    <?php if (getSetting('header.announcement_bar_enabled', '1') == '1'): ?>
     <div class="header-promo d-none d-lg-flex">
         <div class="container">
             <div class="promo-marquee">
                 <div class="promo-track">
                     <?php 
-                    $promoItems = [
-                        ['icon' => 'bi-check-circle-fill', 'text' => 'Sản phẩm <strong>Chính hãng - Xuất VAT đầy đủ</strong>'],
-                        ['icon' => 'bi-truck', 'text' => '<strong>Giao nhanh - Miễn phí</strong> cho đơn 300k'],
-                        ['icon' => 'bi-arrow-repeat', 'text' => '<strong>Thu cũ</strong> giá ngon - Lên đời tiết kiệm']
-                    ];
+                    $announcementText = getSetting('header.announcement_bar_text');
+                    if ($announcementText) {
+                        // If user has set a custom text, use it as a repeating item
+                        $promoItems = [
+                            ['icon' => 'bi-megaphone-fill', 'text' => $announcementText],
+                            ['icon' => 'bi-megaphone-fill', 'text' => $announcementText]
+                        ];
+                    } else {
+                        // Default CellphoneS-style items
+                        $promoItems = [
+                            ['icon' => 'bi-check-circle-fill', 'text' => 'Sản phẩm <strong>Chính hãng - Xuất VAT đầy đủ</strong>'],
+                            ['icon' => 'bi-truck', 'text' => '<strong>Giao nhanh - Miễn phí</strong> cho đơn 300k'],
+                            ['icon' => 'bi-arrow-repeat', 'text' => '<strong>Thu cũ</strong> giá ngon - Lên đời tiết kiệm']
+                        ];
+                    }
                     // Duplicate for smooth infinite scroll
-                    $scrollItems = array_merge($promoItems, $promoItems);
+                    $scrollItems = array_merge($promoItems, $promoItems, $promoItems);
                     foreach ($scrollItems as $item): ?>
                         <div class="promo-item">
                             <i class="bi <?= $item['icon'] ?>" aria-hidden="true"></i>
@@ -69,13 +108,14 @@ $siteLogo = getImageUrl($logoPath);
                     <i class="bi bi-file-earmark-check" aria-hidden="true"></i>
                     <span>Tra cứu đơn hàng</span>
                 </a>
-                <a href="index.php?page=contact" class="promo-link">
+                <a href="tel:<?= htmlspecialchars(getSetting('header.phone_number', '1800 2097')) ?>" class="promo-link">
                     <i class="bi bi-telephone-fill" aria-hidden="true"></i>
-                    <span>1800 2097</span>
+                    <span><?= htmlspecialchars(getSetting('header.phone_number', '1800 2097')) ?></span>
                 </a>
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <nav class="header-main">
         <div class="container">
@@ -94,18 +134,18 @@ $siteLogo = getImageUrl($logoPath);
                     <div class="category-menu-dropdown shadow-lg" id="categoryMenu">
                         <?php 
                         $headerCats = [
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-mobile.svg', 'text' => 'Điện thoại, Tablet'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-laptop.svg', 'text' => 'Laptop'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-audio-2.svg', 'text' => 'Âm thanh'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-watch.svg', 'text' => 'Đồng hồ'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-home-appliances.svg', 'text' => 'Đồ gia dụng'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-accessories.svg', 'text' => 'Phụ kiện'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-pc.svg', 'text' => 'PC, Màn hình'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-tv.svg', 'text' => 'Tivi'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-trade-in.svg', 'text' => 'Thu cũ đổi mới'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-used-goods.svg', 'text' => 'Hàng cũ'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-promotions.svg', 'text' => 'Khuyến mãi'],
-                            ['src' => 'https://dashboard.cellphones.com.vn/storage/icon-homepage-tech-news.svg', 'text' => 'Tin công nghệ']
+                            ['src' => 'assets/img/icons/icon-homepage-mobile.svg', 'text' => 'Điện thoại, Tablet'],
+                            ['src' => 'assets/img/icons/icon-homepage-laptop.svg', 'text' => 'Laptop'],
+                            ['src' => 'assets/img/icons/icon-homepage-audio-2.svg', 'text' => 'Âm thanh'],
+                            ['src' => 'assets/img/icons/icon-homepage-watch.svg', 'text' => 'Đồng hồ'],
+                            ['src' => 'assets/img/icons/icon-homepage-home-appliances.svg', 'text' => 'Đồ gia dụng'],
+                            ['src' => 'assets/img/icons/icon-homepage-accessories.svg', 'text' => 'Phụ kiện'],
+                            ['src' => 'assets/img/icons/icon-homepage-pc.svg', 'text' => 'PC, Màn hình'],
+                            ['src' => 'assets/img/icons/icon-homepage-tv.svg', 'text' => 'Tivi'],
+                            ['src' => 'assets/img/icons/icon-homepage-trade-in.svg', 'text' => 'Thu cũ đổi mới'],
+                            ['src' => 'assets/img/icons/icon-homepage-used-goods.svg', 'text' => 'Hàng cũ'],
+                            ['src' => 'assets/img/icons/icon-homepage-promotions.svg', 'text' => 'Khuyến mãi'],
+                            ['src' => 'assets/img/icons/icon-homepage-tech-news.svg', 'text' => 'Tin công nghệ']
                         ];
                         foreach ($headerCats as $c): ?>
                             <a href="index.php?page=shop" class="category-item">
@@ -204,6 +244,14 @@ $siteLogo = getImageUrl($logoPath);
                 </div>
             </div>
 
+            <div class="header-search d-lg-none mx-2 flex-grow-1" style="height: 38px; border-radius: 8px; min-width: 100px; margin-bottom: 0;">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <form action="index.php" method="GET" class="w-100 mb-0">
+                    <input type="hidden" name="page" value="shop">
+                    <input type="text" name="search" placeholder="Bạn tìm gì?" class="w-100 border-0 bg-transparent outline-none">
+                </form>
+            </div>
+
             <div class="header-mobile-actions d-lg-none ms-auto">
                 <a href="index.php?page=cart" class="mobile-cart-link position-relative" aria-label="Giỏ hàng">
                     <i class="bi bi-cart3" aria-hidden="true"></i>
@@ -220,20 +268,22 @@ $siteLogo = getImageUrl($logoPath);
 
         <!-- Mobile Menu Panel -->
         <div class="collapse d-lg-none bg-white p-3 shadow-sm border-top" id="mobileMenu" style="position: absolute; width: 100%; z-index: 1000;">
-            <div class="header-search mb-3 w-100" style="background: #f1f2f4;">
-                <i class="bi bi-search ms-2 text-dark" aria-hidden="true"></i>
-                <form action="index.php" method="GET" class="w-100 mb-0 d-flex">
-                    <input type="hidden" name="page" value="shop">
-                    <input type="text" name="search" placeholder="Bạn tìm gì hôm nay?" class="w-100 border-0 bg-transparent outline-none p-2" style="color: #111;">
-                </form>
-            </div>
-
             <div class="d-grid gap-2">
                 <?php if ($isLoggedIn): ?>
-                    <a href="index.php?page=profile" class="btn-header justify-content-center text-dark bg-light text-decoration-none">
-                        <i class="bi bi-person-circle text-danger" aria-hidden="true"></i>
-                        <span>Tài khoản (<?= htmlspecialchars($username) ?>)</span>
-                    </a>
+                    <div class="dropdown">
+                        <button class="btn-header justify-content-center text-dark bg-light text-decoration-none w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle text-danger" aria-hidden="true"></i>
+                            <span>Tài khoản (<?= htmlspecialchars($username) ?>)</span>
+                        </button>
+                        <ul class="dropdown-menu w-100 text-center shadow-sm border-0 mt-1">
+                            <li><a class="dropdown-item py-2" href="index.php?page=profile"><i class="bi bi-person me-2"></i>Quản lý tài khoản</a></li>
+                            <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1): ?>
+                                <li><a class="dropdown-item py-2 text-danger fw-bold" href="index.php?page=admin_dashboard"><i class="bi bi-shield-lock me-2"></i>Trang quản trị</a></li>
+                            <?php endif; ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2 text-danger" href="index.php?page=logout" onclick="return confirm('Bạn có chắc muốn đăng xuất?')"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</a></li>
+                        </ul>
+                    </div>
                 <?php else: ?>
                     <a href="index.php?page=login_signup" class="btn-header justify-content-center text-dark bg-light text-decoration-none">
                         <i class="bi bi-person-circle text-danger" aria-hidden="true"></i>
@@ -255,6 +305,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const header = document.getElementById('header');
     
     window.addEventListener('scroll', function() {
+        if (window.innerWidth < 992) {
+            header.classList.remove('is-scrolled');
+            return;
+        }
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         if (scrollTop > 50) {
             header.classList.add('is-scrolled');
